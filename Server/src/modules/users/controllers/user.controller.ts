@@ -4,7 +4,6 @@ import { asyncHandler } from "@/common/utils/asyncHandler";
 import { ApiSuccess } from "@/common/utils/apiSuccess";
 
 import UserService from "../services/user.service";
-import userRepo from "../repositories/user.repo";
 
 
 class UserController {
@@ -41,31 +40,6 @@ class UserController {
         }
     );
 
-
-    login = asyncHandler(async (req: Request, res: Response) => {
-        const user = await UserService.loginService(req.body);
-
-        return res.status(200).json(new ApiSuccess({
-            message: "User logged in successfully",
-            data: {
-                userId: user._id,
-                email: user.email,
-                username: user.username,
-                profile: user.profile
-            }
-        }))
-    });
-
-    verifyEmail = asyncHandler(async (req: Request, res: Response) => {
-        const result = await this.userService.verifyEmailService(req.body);
-
-        return res.status(200).json(
-            new ApiSuccess({
-                message: "Email verified successfully",
-                data: result,
-            })
-        )
-    })
 }
 
 

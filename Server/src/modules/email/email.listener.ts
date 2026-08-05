@@ -10,7 +10,7 @@ eventBus.subscribe(
         email: string,
         username: string
     }) => {
-        console.log('Verfication mail sent successfully')
+        console.log('Queuing verification email...')
         await emailQueue.add("send-email", {
             username: event.username,
             email: event.email

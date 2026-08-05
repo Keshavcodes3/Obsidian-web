@@ -52,7 +52,7 @@ const userSchema = new Schema<Iuser>({
         type: String,
         enum: Object.values(UserStatus),
         default: UserStatus.ACTIVE,
-        requried: true
+        required: true
     },
     emailVerified: {
         type: Boolean,
