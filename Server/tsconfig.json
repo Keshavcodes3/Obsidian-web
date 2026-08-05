@@ -1,0 +1,54 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": [
+        "*"
+      ],
+      "@/config/*": [
+        "config/*"
+      ],
+      "@/common/*": [
+        "common/*"
+      ],
+      "@/database/*": [
+        "database/*"
+      ],
+      "@/modules/*": [
+        "modules/*"
+      ],
+      "@/middleware/*": [
+        "middleware/*"
+      ],
+      "@/routes/*": [
+        "routes/*"
+      ],
+      "@/utils/*": [
+        "utils/*"
+      ],
+      "@/events/*": [
+        "events/*"
+      ],
+      "@/queues/*": [
+        "queues/*"
+      ],
+      "@/storage/*": [
+        "storage/*"
+      ],
+      "@/cache/*": [
+        "cache/*"
+      ],
+      "@/websocket/*": [
+        "websocket/*"
+      ],
+      "@/bootstrap/*": [
+        "bootstrap/*"
+      ]
+    }
+  }
+}
