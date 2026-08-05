@@ -75,6 +75,30 @@ class UserService {
         return user;
     }
 
+    getMeService = async (userId: string) => {
+        const user = await this.userRepository.findById(userId);
+
+        if (!user) {
+            throw new ApiError({
+                statusCode: 404,
+                message: "User not found",
+            });
+        }
+
+        // Return user without passwordHash
+        return {
+            userId: user._id,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+            status: user.status,
+            profile: user.profile,
+            emailVerified: user.emailVerified,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+        };
+    };
+
 }
 
 

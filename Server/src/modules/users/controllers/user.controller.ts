@@ -40,6 +40,19 @@ class UserController {
         }
     );
 
+    getMe = asyncHandler(async (req: Request, res: Response) => {
+        // req.user is guaranteed to exist because of requireAuth middleware
+        const userId = req.user!.userId;
+        const user = await this.userService.getMeService(userId);
+
+        return res.status(200).json(
+            new ApiSuccess({
+                message: "User details fetched successfully",
+                data: user,
+            })
+        );
+    });
+
 }
 
 

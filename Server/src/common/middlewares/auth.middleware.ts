@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { ApiError } from "../utils/apiError";
+import { ApiError } from "@/common/utils/apiError";
 import { envConfig } from "@/config/env";
 
 /**
@@ -19,17 +19,22 @@ import { envConfig } from "@/config/env";
  */
 export const requireAuth = (req: Request, res: Response, next: NextFunction) => {
     try {
+        let token;
         const authHeader = req.headers.authorization;
 
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        if (authHeader && authHeader.startsWith("Bearer ")) {
+            token = authHeader.split(" ")[1];
+        }
+
+        if (!token) token = req.cookies?.accessToken;
+
+        if (!token) {
             throw new ApiError({
                 statusCode: 401,
                 message: "Authentication token is missing or invalid",
+                errorCode: "MISSING_TOKEN"
             });
         }
-
-        const token = authHeader.split(" ")[1];
-
         // Verify token
         const decoded = jwt.verify(token, envConfig.JWT_ACCESS_SECRET) as {
             userId: string;

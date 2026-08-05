@@ -12,7 +12,7 @@ import { envConfig } from "@/config/env";
  * Business logic belongs in the service layer.
  */
 class AuthController {
-    
+
     // Cookie options used for refresh token
     private getRefreshTokenCookieOptions() {
         return {
@@ -22,6 +22,17 @@ class AuthController {
             domain: envConfig.COOKIE_DOMAIN || undefined,
             path: "/api/v1/auth/refresh", // Only send this cookie on the refresh endpoint
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+        }
+    }
+    // Cookie options used for access token
+    private getAccessTokenCookieOptions() {
+        return {
+            httpOnly: true,
+            secure: envConfig.COOKIE_SECURE,
+            sameSite: envConfig.COOKIE_SAME_SITE,
+            domain: envConfig.COOKIE_DOMAIN || undefined,
+            path: "/", // Sent with every request
+            maxAge: 15 * 60 * 1000, // 15 minutes
         };
     }
 
@@ -41,13 +52,20 @@ class AuthController {
             this.getRefreshTokenCookieOptions()
         );
 
+        // Set the access token as an HTTP-only cookie
+        res.cookie(
+            "accessToken",
+            result.accessToken,
+            this.getAccessTokenCookieOptions()
+        );
+
         return res.status(200).json(new ApiSuccess({
             message: "User logged in successfully",
             data: {
                 user: result.user,
                 accessToken: result.accessToken,
-                // We do NOT return the refreshToken in the JSON body,
-                // it is safely stored in the HTTP-only cookie.
+                // We return accessToken in body too for flexibility,
+                // but it is also stored safely in the HTTP-only cookie.
             }
         }));
     });
@@ -66,7 +84,7 @@ class AuthController {
     refreshSession = asyncHandler(async (req: Request, res: Response) => {
         // Retrieve the refresh token from cookies
         const oldRefreshToken = req.cookies?.refreshToken;
-        
+
         const deviceInfo = {
             ipAddress: req.ip || req.headers["x-forwarded-for"] as string || "",
             userAgent: req.headers["user-agent"] || "",
@@ -79,6 +97,13 @@ class AuthController {
             "refreshToken",
             result.refreshToken,
             this.getRefreshTokenCookieOptions()
+        );
+
+        // Set the NEW access token
+        res.cookie(
+            "accessToken",
+            result.accessToken,
+            this.getAccessTokenCookieOptions()
         );
 
         return res.status(200).json(new ApiSuccess({
@@ -94,9 +119,14 @@ class AuthController {
 
         await authService.logoutService(refreshToken);
 
-        // Clear the cookie
+        // Clear cookies
         res.clearCookie("refreshToken", {
             ...this.getRefreshTokenCookieOptions(),
+            maxAge: 0,
+        });
+
+        res.clearCookie("accessToken", {
+            ...this.getAccessTokenCookieOptions(),
             maxAge: 0,
         });
 
