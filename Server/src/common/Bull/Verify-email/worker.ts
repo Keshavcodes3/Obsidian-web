@@ -13,7 +13,8 @@ interface Job {
 
 export const emailVerifyWorker = new Worker<Job>("email-verify", async (job) => {
     const { email, username, otp } = job.data
-    await sendOtpEmail(email,otp)
-},{
-    connection:bullConnection
+    console.log(`otp ${otp} sent to use ${email}`)
+    await sendOtpEmail(email, otp)
+}, {
+    connection: bullConnection
 })

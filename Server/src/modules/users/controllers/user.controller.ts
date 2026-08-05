@@ -29,7 +29,7 @@ class UserController {
                 );
 
 
-            return res.status(200).json(new ApiSuccess({
+            return res.status(201).json(new ApiSuccess({
                 message: "User created successfully",
                 data: {
                     userId: user._id,
@@ -41,6 +41,31 @@ class UserController {
         }
     );
 
+
+    login = asyncHandler(async (req: Request, res: Response) => {
+        const user = await UserService.loginService(req.body);
+
+        return res.status(200).json(new ApiSuccess({
+            message: "User logged in successfully",
+            data: {
+                userId: user._id,
+                email: user.email,
+                username: user.username,
+                profile: user.profile
+            }
+        }))
+    });
+
+    verifyEmail = asyncHandler(async (req: Request, res: Response) => {
+        const result = await this.userService.verifyEmailService(req.body);
+
+        return res.status(200).json(
+            new ApiSuccess({
+                message: "Email verified successfully",
+                data: result,
+            })
+        )
+    })
 }
 
 

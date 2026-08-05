@@ -11,5 +11,9 @@ userRouter.post(
     userController.register
 );
 
+userRouter.post("/login", userController.login);
+
+userRouter.post("/verify-email", userController.verifyEmail);
+
 
 export default userRouter;
