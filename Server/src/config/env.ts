@@ -10,6 +10,7 @@ type Config = {
 
     readonly MONGODB_URI: string;
 
+    readonly RESEND_API_KEY: string;
 
     readonly REDIS_HOST: string;
     readonly REDIS_PORT: number;
@@ -127,7 +128,7 @@ type Config = {
 
 export const envConfig: Config = {
     NODE_ENV: process.env.NODE_ENV as Config["NODE_ENV"],
-
+    RESEND_API_KEY: process.env.RESEND_API_KEY!,
     PORT: Number(process.env.PORT),
     APP_NAME: process.env.APP_NAME!,
     APP_URL: process.env.APP_URL!,
