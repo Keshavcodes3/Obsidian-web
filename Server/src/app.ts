@@ -22,12 +22,13 @@ import "./common/Listener/email.listener"
 import userRouter from './modules/users/routes/user.routes'
 import authRouter from './modules/auth/routes/auth.routes'
 import workspaceRouter from './modules/Workspace/routes/workspace.routes'
-// import authRouter from './modules/auth/routes/auth.routes'
+import vaultRouter from './modules/vault/routes/vault.routes'
 
 app.use(`${envConfig.API_PREFIX}/users`, userRouter)
 app.use(`${envConfig.API_PREFIX}/auth`, authRouter)
 app.use(`${envConfig.API_PREFIX}/workspace`, workspaceRouter)
-// Global error handler must be the very last middleware
+app.use(`${envConfig.API_PREFIX}/vault`, vaultRouter)
+
 app.use(errorHandler)
 
 export default app
