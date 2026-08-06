@@ -1,0 +1,10 @@
+export const generateSlug = (
+    value: string
+): string => {
+    return value
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-");
+};
