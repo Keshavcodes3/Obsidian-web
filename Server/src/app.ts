@@ -13,7 +13,10 @@ app.use(cookieParser())
 app.use(morgan("dev"))
 app.use(securityMiddleware)
 
-import "./modules/email/email.listener"
+
+//?Listener
+import "./common/Listener/workspace.listener"
+import "./common/Listener/email.listener"
 
 
 import userRouter from './modules/users/routes/user.routes'
