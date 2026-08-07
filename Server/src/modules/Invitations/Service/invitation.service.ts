@@ -29,7 +29,7 @@ class InvitationService {
     }) => {
 
         const workspace =
-            await this.workspaceRepo.findById(payload.workspaceId);
+            await this.workspaceRepo.findById(new Types.ObjectId(payload.workspaceId));
 
         if (!workspace) {
             throw new ApiError({

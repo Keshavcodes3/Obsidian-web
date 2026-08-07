@@ -42,12 +42,13 @@ class VaultController {
         }
     );
 
-     getWorkspaceVaults = asyncHandler(
-         async (req: Request, res: Response) => {
-             const vaults =
-                 await this.vaultService.getWorkspaceVaults(
-                     new Types.ObjectId(req.params.workspaceId)
-                 );
+    getWorkspaceVaults = asyncHandler(
+        async (req: Request, res: Response) => {
+            const vaults =
+                await this.vaultService.getWorkspaceVaults(
+                    //@ts-ignore
+                    new Types.ObjectId(req.params.workspaceId)
+                );
 
             return res.status(201).json({
                 success: true,

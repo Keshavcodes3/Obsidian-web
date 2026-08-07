@@ -18,7 +18,7 @@ export async function sendOtpEmail(email: string, otp: number) {
           ${otp}
         </h1>emai
 
-        <p>This code will expire in <strong>5 minutes</strong>.</p>
+        <p>This code will expire in <strong>15 minutes</strong>.</p>
 
         <p>If you didn't request this, you can safely ignore this email.</p>
       </div>

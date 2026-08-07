@@ -5,3 +5,4 @@ export const normalizeFolderName = (name: string): string => {
         .replace(/\s+/g, " ")
         .substring(0, 100);
 };
+
