@@ -115,7 +115,7 @@ class VaultService {
 
          const workspace = await this.workspaceRepo.findById(
              workspaceId
-         );
+         )
 
          if (!workspace) {
              throw new ApiError({
