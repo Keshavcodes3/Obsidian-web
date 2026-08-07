@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { Request, Response } from "express";
 
 import { asyncHandler } from "@/common/utils/asyncHandler";
@@ -29,7 +30,8 @@ class VaultController {
     getVaultById = asyncHandler(
         async (req: Request, res: Response) => {
             const vault = await this.vaultService.getVaultById(
-                req.params.vaultId[0]
+                //@ts-ignore
+                req.params.vaultId
             );
 
             return res.status(201).json({
@@ -40,13 +42,12 @@ class VaultController {
         }
     );
 
-    getWorkspaceVaults = asyncHandler(
-        async (req: Request, res: Response) => {
-            const vaults =
-                await this.vaultService.getWorkspaceVaults(
-                    //@ts-ignore
-                    req.params.workspaceId
-                );
+     getWorkspaceVaults = asyncHandler(
+         async (req: Request, res: Response) => {
+             const vaults =
+                 await this.vaultService.getWorkspaceVaults(
+                     new Types.ObjectId(req.params.workspaceId)
+                 );
 
             return res.status(201).json({
                 success: true,

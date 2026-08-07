@@ -23,7 +23,7 @@ class MemberService {
     }) => {
 
         const workspace = await this.workspaceRepo.findById(
-            payload.workspaceId.toString()
+            payload.workspaceId
         );
 
         if (!workspace) {

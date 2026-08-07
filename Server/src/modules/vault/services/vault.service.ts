@@ -109,20 +109,21 @@ class VaultService {
         return vault;
     };
 
-    getWorkspaceVaults = async (
-        workspaceId: Types.ObjectId
-    ) => {
+     getWorkspaceVaults = async (
+         workspaceId: Types.ObjectId
+     ) => {
 
-        const workspace = await this.workspaceRepo.findById(
-            workspaceId
-        );
+         const workspace = await this.workspaceRepo.findById(
+             workspaceId
+         );
 
-        if (!workspace) {
-            throw new ApiError({
-                statusCode: 404,
-                message: "Workspace not found",
-            });
-        }
+         if (!workspace) {
+             throw new ApiError({
+                 statusCode: 404,
+                 message: "Workspace not found",
+                 errorCode: "WORKSPACE_NOT_FOUND"
+             });
+         }
 
         return this.vaultRepo.findByWorkspace(
             workspaceId
