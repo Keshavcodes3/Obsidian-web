@@ -183,6 +183,13 @@ class MemberService {
                 message: "Member not found",
             });
         }
+        
+        if (member.role === WorkspaceRole.OWNER) {
+            throw new ApiError({
+                statusCode: 400,
+                message: "Owner cannot be removed",
+            });
+        }
 
         await this.memberRepo.remove(member._id as Types.ObjectId);
 
@@ -230,6 +237,18 @@ class MemberService {
         currentOwnerId: Types.ObjectId;
         newOwnerId: Types.ObjectId;
     }) => {
+
+        const isNewOwnerMember = await this.memberRepo.exists({
+            workspaceId: payload.workspaceId,
+            userId: payload.newOwnerId,
+        });
+
+        if (!isNewOwnerMember) {
+            throw new ApiError({
+                statusCode: 400,
+                message: "New owner must be an existing member",
+            });
+        }
 
         await this.memberRepo.updateRole({
             workspaceId: payload.workspaceId,

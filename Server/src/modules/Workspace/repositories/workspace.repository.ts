@@ -1,6 +1,6 @@
 import { WorkspaceModel } from "../models/workspace.model";
 import { WorkspaceInterface } from "../types/workspace.types";
-
+import { Types } from "mongoose";
 class WorkspaceRepository {
 
     async create(
@@ -10,7 +10,7 @@ class WorkspaceRepository {
     }
 
     async findById(
-        workspaceId: string
+        workspaceId: Types.ObjectId
     ) {
         return WorkspaceModel.findById(workspaceId);
     }

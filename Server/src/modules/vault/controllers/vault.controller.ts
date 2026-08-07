@@ -14,7 +14,7 @@ class VaultController {
             const vault = await this.vaultService.createVault(
                 //@ts-ignore
                 req.params.workspaceId,
-                req.user.userId,
+                req.user!.userId,
                 req.body
             );
 
@@ -44,7 +44,8 @@ class VaultController {
         async (req: Request, res: Response) => {
             const vaults =
                 await this.vaultService.getWorkspaceVaults(
-                    req.params.workspaceId[0]
+                    //@ts-ignore
+                    req.params.workspaceId
                 );
 
             return res.status(201).json({
@@ -107,8 +108,8 @@ class VaultController {
                     req.params.vaultId[0]
                 );
 
-             return res.status(201).json({
-                success:true,
+            return res.status(201).json({
+                success: true,
                 message: "default vault updated successfully",
                 data: vault
             })

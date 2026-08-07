@@ -20,14 +20,14 @@ class VaultService {
     ) { }
 
     createVault = async (
-        workspaceId: string,
+        workspaceId: Types.ObjectId,
         userId: string,
         payload: createVaultDTO
     ) => {
 
         const workspace =
             await this.workspaceRepo.findById(
-                workspaceId as string
+                workspaceId
             );
 
         if (!workspace) {
@@ -53,6 +53,10 @@ class VaultService {
             slug = `${slug}-${Date.now()}`;
         }
 
+        const totalVaults = await this.vaultRepo.countByWorkspace(
+            new Types.ObjectId(workspaceId)
+        );
+
         const vault =
             await this.vaultRepo.create({
                 ...payload,
@@ -60,7 +64,7 @@ class VaultService {
                 slug,
                 workspaceId: new Types.ObjectId(workspaceId),
                 createdBy: new Types.ObjectId(userId),
-                isDefault: false,
+                isDefault: totalVaults === 0,
                 settings: {
                     allowAttachments: true,
                     allowWikiLinks: true,
@@ -106,7 +110,7 @@ class VaultService {
     };
 
     getWorkspaceVaults = async (
-        workspaceId: string
+        workspaceId: Types.ObjectId
     ) => {
 
         const workspace = await this.workspaceRepo.findById(
@@ -121,7 +125,7 @@ class VaultService {
         }
 
         return this.vaultRepo.findByWorkspace(
-            new Types.ObjectId(workspaceId)
+            workspaceId
         );
     };
 

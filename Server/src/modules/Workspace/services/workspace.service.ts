@@ -57,14 +57,6 @@ class WorkspaceService {
 
                 ownerId: new Types.ObjectId(ownerId),
 
-                members: [
-                    {
-                        userId: new Types.ObjectId(ownerId),
-                        role: WorkspaceRole.OWNER,
-                        joinedAt: new Date(),
-                    },
-                ],
-
                 settings: {
                     allowInvites: true,
                     defaultVaultName: "My Vault",
@@ -100,7 +92,7 @@ class WorkspaceService {
     ) => {
 
         const workspace =
-            await this.workspaceRepository.findById(workspaceId);
+            await this.workspaceRepository.findById(new Types.ObjectId(workspaceId));
 
         if (!workspace) {
             throw new ApiError({
@@ -131,7 +123,7 @@ class WorkspaceService {
     ) => {
 
         const workspace =
-            await this.workspaceRepository.findById(workspaceId);
+            await this.workspaceRepository.findById(new Types.ObjectId(workspaceId));
 
         if (!workspace) {
             throw new ApiError({
@@ -172,7 +164,7 @@ class WorkspaceService {
     ) => {
 
         const workspace =
-            await this.workspaceRepository.findById(workspaceId);
+            await this.workspaceRepository.findById(new Types.ObjectId(workspaceId));
 
         if (!workspace) {
             throw new ApiError({

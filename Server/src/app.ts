@@ -23,11 +23,15 @@ import userRouter from './modules/users/routes/user.routes'
 import authRouter from './modules/auth/routes/auth.routes'
 import workspaceRouter from './modules/Workspace/routes/workspace.routes'
 import vaultRouter from './modules/vault/routes/vault.routes'
+import memberRouter from './modules/Members/routes/member.routes'
+import invitationRouter from './modules/Invitations/Routes/invitation.routes'
 
 app.use(`${envConfig.API_PREFIX}/users`, userRouter)
 app.use(`${envConfig.API_PREFIX}/auth`, authRouter)
 app.use(`${envConfig.API_PREFIX}/workspace`, workspaceRouter)
 app.use(`${envConfig.API_PREFIX}/vault`, vaultRouter)
+app.use(`${envConfig.API_PREFIX}`, memberRouter)
+app.use(`${envConfig.API_PREFIX}`, invitationRouter)
 
 app.use(errorHandler)
 

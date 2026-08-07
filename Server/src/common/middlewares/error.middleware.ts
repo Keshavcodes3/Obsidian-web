@@ -109,7 +109,7 @@ export const errorHandler = (
 
 
     // --- Handle Mongoose CastError (invalid ObjectId, etc.) ---
-    if (err.name === "CastError") {
+    if (err.name === "CastError" || err.name === "BSONError") {
         logger.warn({
             type: "CAST_ERROR",
             path: req.originalUrl,
