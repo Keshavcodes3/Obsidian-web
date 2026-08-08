@@ -2,7 +2,7 @@ import { Types, ClientSession, startSession } from "mongoose";
 import { validateObjectId } from "@/common/utils/objectId.util";
 
 import blockRepository from "../Repositary/block.repo";
-import noteRepository from "@/modules/Notes/repositories/note.repo";
+import noteRepoo from "@/modules/Notes/repositories/note.repo";
 import vaultRepository from "@/modules/vault/repositories/vault.repo";
 import memberRepository from "@/modules/Members/repositories/member.repo";
 
@@ -77,7 +77,7 @@ const BLOCK_TYPE_PROPS = {
 class BlockService {
     constructor(
         private readonly blockRepo: typeof blockRepository,
-        private readonly noteRepo: typeof noteRepository,
+        private readonly noteRepo: typeof noteRepoo,
         private readonly vaultRepo: typeof vaultRepository,
         private readonly memberRepo: typeof memberRepository,
     ) { }
@@ -913,7 +913,7 @@ class BlockService {
 
 export default new BlockService(
     blockRepository,
-    noteRepository,
+    noteRepoo,
     vaultRepository,
     memberRepository
 );
