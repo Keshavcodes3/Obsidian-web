@@ -4,6 +4,8 @@ import { ApiError } from "@/common/utils/apiError";
 import { eventBus } from "@/common/events";
 
 import workspaceRepository from "@/modules/Workspace/repositories/workspace.repository";
+import memberRepositoryClass from "@/modules/Members/repositories/member.repo";
+import { validateObjectId } from "@/common/utils/objectId.util";
 
 import vaultRepository from "../repositories/vault.repo";
 
@@ -16,19 +18,40 @@ import { VAULT_EVENTS } from "../events/vault.event";
 class VaultService {
     constructor(
         private readonly vaultRepo: typeof vaultRepository,
-        private readonly workspaceRepo: typeof workspaceRepository
+        private readonly workspaceRepo: typeof workspaceRepository,
+        private readonly memberRepo: typeof memberRepositoryClass
     ) { }
 
+    private async authorizeWorkspaceAccess(workspaceId: Types.ObjectId, userId: string) {
+        const isMember = await this.memberRepo.exists({
+            workspaceId,
+            userId: new Types.ObjectId(userId)
+        });
+        if (!isMember) {
+            const workspace = await this.workspaceRepo.findById(workspaceId);
+            if (!workspace || workspace.ownerId.toString() !== userId) {
+                throw new ApiError({
+                    statusCode: 403,
+                    message: "Access denied to workspace",
+                });
+            }
+        }
+    }
+
     createVault = async (
-        workspaceId: Types.ObjectId,
+        workspaceId: string,
         userId: string,
         payload: createVaultDTO
     ) => {
+        validateObjectId(workspaceId, "Workspace");
+        validateObjectId(userId, "User");
+
+        const workspaceObjId = new Types.ObjectId(workspaceId);
+
+        await this.authorizeWorkspaceAccess(workspaceObjId, userId);
 
         const workspace =
-            await this.workspaceRepo.findById(
-                workspaceId
-            );
+            await this.workspaceRepo.findById(workspaceObjId);
 
         if (!workspace) {
             throw new ApiError({
@@ -53,16 +76,14 @@ class VaultService {
             slug = `${slug}-${Date.now()}`;
         }
 
-        const totalVaults = await this.vaultRepo.countByWorkspace(
-            new Types.ObjectId(workspaceId)
-        );
+        const totalVaults = await this.vaultRepo.countByWorkspace(workspaceObjId);
 
         const vault =
             await this.vaultRepo.create({
                 ...payload,
                 name: normalizedName,
                 slug,
-                workspaceId: new Types.ObjectId(workspaceId),
+                workspaceId: workspaceObjId,
                 createdBy: new Types.ObjectId(userId),
                 isDefault: totalVaults === 0,
                 settings: {
@@ -92,8 +113,11 @@ class VaultService {
     };
 
     getVaultById = async (
-        vaultId: string
+        vaultId: string,
+        userId: string
     ) => {
+        validateObjectId(vaultId, "Vault");
+        validateObjectId(userId, "User");
 
         const vault = await this.vaultRepo.findById(
             new Types.ObjectId(vaultId)
@@ -106,16 +130,22 @@ class VaultService {
             });
         }
 
+        await this.authorizeWorkspaceAccess(vault.workspaceId, userId);
+
         return vault;
     };
 
      getWorkspaceVaults = async (
-         workspaceId: Types.ObjectId
+         workspaceId: string,
+         userId: string
      ) => {
+         validateObjectId(workspaceId, "Workspace");
+         validateObjectId(userId, "User");
 
-         const workspace = await this.workspaceRepo.findById(
-             workspaceId
-         )
+         const workspaceObjId = new Types.ObjectId(workspaceId);
+         await this.authorizeWorkspaceAccess(workspaceObjId, userId);
+
+         const workspace = await this.workspaceRepo.findById(workspaceObjId);
 
          if (!workspace) {
              throw new ApiError({
@@ -125,15 +155,16 @@ class VaultService {
              });
          }
 
-        return this.vaultRepo.findByWorkspace(
-            workspaceId
-        );
+        return this.vaultRepo.findByWorkspace(workspaceObjId);
     };
 
     updateVault = async (
         vaultId: string,
+        userId: string,
         payload: Partial<createVaultDTO>
     ) => {
+        validateObjectId(vaultId, "Vault");
+        validateObjectId(userId, "User");
 
         const vault = await this.vaultRepo.findById(
             new Types.ObjectId(vaultId)
@@ -145,6 +176,8 @@ class VaultService {
                 message: "Vault not found",
             });
         }
+
+        await this.authorizeWorkspaceAccess(vault.workspaceId, userId);
 
         let slug = vault.slug;
 
@@ -188,8 +221,11 @@ class VaultService {
     };
 
     deleteVault = async (
-        vaultId: string
+        vaultId: string,
+        userId: string
     ) => {
+        validateObjectId(vaultId, "Vault");
+        validateObjectId(userId, "User");
 
         const vault =
             await this.vaultRepo.findById(
@@ -202,6 +238,8 @@ class VaultService {
                 message: "Vault not found",
             });
         }
+
+        await this.authorizeWorkspaceAccess(vault.workspaceId, userId);
 
         if (vault.isDefault) {
             throw new ApiError({
@@ -236,13 +274,17 @@ class VaultService {
     };
 
     getDefaultVault = async (
-        workspaceId: string
+        workspaceId: string,
+        userId: string
     ) => {
+        validateObjectId(workspaceId, "Workspace");
+        validateObjectId(userId, "User");
+
+        const workspaceObjId = new Types.ObjectId(workspaceId);
+        await this.authorizeWorkspaceAccess(workspaceObjId, userId);
 
         const vault =
-            await this.vaultRepo.findDefaultVault(
-                new Types.ObjectId(workspaceId)
-            );
+            await this.vaultRepo.findDefaultVault(workspaceObjId);
 
         if (!vault) {
             throw new ApiError({
@@ -256,8 +298,15 @@ class VaultService {
 
     setDefaultVault = async (
         workspaceId: string,
-        vaultId: string
+        vaultId: string,
+        userId: string
     ) => {
+        validateObjectId(workspaceId, "Workspace");
+        validateObjectId(vaultId, "Vault");
+        validateObjectId(userId, "User");
+
+        const workspaceObjId = new Types.ObjectId(workspaceId);
+        await this.authorizeWorkspaceAccess(workspaceObjId, userId);
 
         const vault =
             await this.vaultRepo.findById(
@@ -272,7 +321,7 @@ class VaultService {
         }
 
         return this.vaultRepo.updateDefaultVault({
-            workspaceId: new Types.ObjectId(workspaceId),
+            workspaceId: workspaceObjId,
             vaultId: new Types.ObjectId(vaultId),
         });
     };
@@ -280,5 +329,6 @@ class VaultService {
 
 export default new VaultService(
     vaultRepository,
-    workspaceRepository
+    workspaceRepository,
+    memberRepositoryClass
 );

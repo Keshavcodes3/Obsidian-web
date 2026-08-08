@@ -3,6 +3,9 @@ import { Types } from "mongoose";
 import { ApiError } from "@/common/utils/apiError";
 import { eventBus } from "@/common/events";
 
+import { validateObjectId } from "@/common/utils/objectId.util";
+import memberRepositoryClass from "@/modules/Members/repositories/member.repo";
+
 import workspaceRepositoryClass from "../repositories/workspace.repository";
 
 import { CreateWorkspaceDto } from "../dtos/workspace.dto";
@@ -17,7 +20,8 @@ import { normalizeWorkspaceName } from "../utils/normalizeWorkspaceName";
 
 class WorkspaceService {
     constructor(
-        private readonly workspaceRepository: typeof workspaceRepositoryClass
+        private readonly workspaceRepository: typeof workspaceRepositoryClass,
+        private readonly memberRepository: typeof memberRepositoryClass
     ) { }
 
     /**
@@ -27,6 +31,7 @@ class WorkspaceService {
         ownerId: string,
         payload: CreateWorkspaceDto
     ) => {
+        validateObjectId(ownerId, "Owner");
 
         // Normalize name
         const normalizedName = normalizeWorkspaceName(payload.name);
@@ -88,8 +93,11 @@ class WorkspaceService {
      * Get Workspace By Id
      */
     getWorkspaceById = async (
-        workspaceId: string
+        workspaceId: string,
+        userId: string
     ) => {
+        validateObjectId(workspaceId, "Workspace");
+        validateObjectId(userId, "User");
 
         const workspace =
             await this.workspaceRepository.findById(new Types.ObjectId(workspaceId));
@@ -100,6 +108,20 @@ class WorkspaceService {
                 message: "Workspace not found",
             });
         }
+
+        const isMember = await this.memberRepository.exists({
+            workspaceId: new Types.ObjectId(workspaceId),
+            userId: new Types.ObjectId(userId)
+        });
+
+        if (!isMember && workspace.ownerId.toString() !== userId) {
+            throw new ApiError({
+                statusCode: 403,
+                message: "Access denied to workspace",
+            });
+        }
+
+
 
         return workspace;
     };
@@ -110,6 +132,7 @@ class WorkspaceService {
     getMyWorkspaces = async (
         ownerId: string
     ) => {
+        validateObjectId(ownerId, "Owner");
 
         return this.workspaceRepository.findByOwner(ownerId);
     };
@@ -119,8 +142,11 @@ class WorkspaceService {
      */
     updateWorkspace = async (
         workspaceId: string,
+        userId: string,
         payload: Partial<CreateWorkspaceDto>
     ) => {
+        validateObjectId(workspaceId, "Workspace");
+        validateObjectId(userId, "User");
 
         const workspace =
             await this.workspaceRepository.findById(new Types.ObjectId(workspaceId));
@@ -131,6 +157,15 @@ class WorkspaceService {
                 message: "Workspace not found",
             });
         }
+
+        if (workspace.ownerId.toString() !== userId) {
+            throw new ApiError({
+                statusCode: 403,
+                message: "Only workspace owner can modify workspace settings",
+            });
+        }
+
+
 
         if (payload.name) {
             workspace.name = normalizeWorkspaceName(payload.name);
@@ -160,8 +195,11 @@ class WorkspaceService {
      * Delete Workspace
      */
     deleteWorkspace = async (
-        workspaceId: string
+        workspaceId: string,
+        userId: string
     ) => {
+        validateObjectId(workspaceId, "Workspace");
+        validateObjectId(userId, "User");
 
         const workspace =
             await this.workspaceRepository.findById(new Types.ObjectId(workspaceId));
@@ -172,6 +210,15 @@ class WorkspaceService {
                 message: "Workspace not found",
             });
         }
+
+        if (workspace.ownerId.toString() !== userId) {
+            throw new ApiError({
+                statusCode: 403,
+                message: "Only workspace owner can delete workspace",
+            });
+        }
+
+
 
         await this.workspaceRepository.deleteById(workspaceId);
 
@@ -187,5 +234,6 @@ class WorkspaceService {
 }
 
 export default new WorkspaceService(
-    workspaceRepositoryClass
+    workspaceRepositoryClass,
+    memberRepositoryClass
 );

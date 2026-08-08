@@ -1,7 +1,8 @@
-import { Types, isValidObjectId } from "mongoose";
+import { Types } from "mongoose";
 
 import { ApiError } from "@/common/utils/apiError";
 import { eventBus } from "@/common/events";
+import { validateObjectId } from "@/common/utils/objectId.util";
 
 import vaultRepository from "@/modules/vault/repositories/vault.repo";
 import folderRepository from "../repositories/folder.repo";
@@ -19,14 +20,7 @@ class FolderService {
         private readonly memberRepo: typeof memberRepository
     ) { }
 
-    private validateObjectId(id: string, name: string) {
-        if (!id || !isValidObjectId(id)) {
-            throw new ApiError({
-                statusCode: 400,
-                message: `Invalid ${name} ID format`,
-            });
-        }
-    }
+
 
     private async authorizeVaultAccess(vaultId: string, userId: string) {
         const vault = await this.vaultRepo.findById(new Types.ObjectId(vaultId));
@@ -57,9 +51,9 @@ class FolderService {
         userId: string,
         payload: CreateFolderDTO
     ) => {
-        this.validateObjectId(vaultId, "Vault");
+        validateObjectId(vaultId, "Vault");
         if (payload.parentFolderId) {
-            this.validateObjectId(payload.parentFolderId.toString(), "Parent Folder");
+            validateObjectId(payload.parentFolderId.toString(), "Parent Folder");
         }
 
         const vault = await this.authorizeVaultAccess(vaultId, userId);
@@ -133,7 +127,7 @@ class FolderService {
     };
 
     getFolderById = async (folderId: string, userId: string) => {
-        this.validateObjectId(folderId, "Folder");
+        validateObjectId(folderId, "Folder");
 
         const folder = await this.folderRepo.findById(new Types.ObjectId(folderId));
         if (!folder) {
@@ -149,7 +143,7 @@ class FolderService {
     };
 
     getVaultFolders = async (vaultId: string, userId: string) => {
-        this.validateObjectId(vaultId, "Vault");
+        validateObjectId(vaultId, "Vault");
         await this.authorizeVaultAccess(vaultId, userId);
 
         return this.folderRepo.findVaultFolders(new Types.ObjectId(vaultId));
@@ -160,7 +154,7 @@ class FolderService {
         userId: string,
         payload: { name?: string; color?: string; icon?: string }
     ) => {
-        this.validateObjectId(folderId, "Folder");
+        validateObjectId(folderId, "Folder");
 
         const folder = await this.folderRepo.findById(new Types.ObjectId(folderId));
         if (!folder) {
@@ -226,8 +220,8 @@ class FolderService {
     };
 
     moveFolder = async (folderId: string, newParentId: string | null, userId: string) => {
-        this.validateObjectId(folderId, "Folder");
-        if (newParentId) this.validateObjectId(newParentId, "Parent Folder");
+        validateObjectId(folderId, "Folder");
+        if (newParentId) validateObjectId(newParentId, "Parent Folder");
 
         const folder = await this.folderRepo.findById(new Types.ObjectId(folderId));
         if (!folder) {
@@ -331,7 +325,7 @@ class FolderService {
     };
 
     deleteFolder = async (folderId: string, userId: string) => {
-        this.validateObjectId(folderId, "Folder");
+        validateObjectId(folderId, "Folder");
 
         const folder = await this.folderRepo.findById(new Types.ObjectId(folderId));
         if (!folder) {
@@ -365,7 +359,7 @@ class FolderService {
     };
 
     restoreFolder = async (folderId: string, userId: string) => {
-        this.validateObjectId(folderId, "Folder");
+        validateObjectId(folderId, "Folder");
 
         // Use standard find to get soft-deleted folders, repo.findById ignores isDeleted=true
         const folder = await this.folderRepo.findOne({

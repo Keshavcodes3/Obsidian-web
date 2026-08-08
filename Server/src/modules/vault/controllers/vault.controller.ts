@@ -31,7 +31,8 @@ class VaultController {
         async (req: Request, res: Response) => {
             const vault = await this.vaultService.getVaultById(
                 //@ts-ignore
-                req.params.vaultId
+                req.params.vaultId,
+                req.user!.userId.toString()
             );
 
             return res.status(201).json({
@@ -47,7 +48,8 @@ class VaultController {
             const vaults =
                 await this.vaultService.getWorkspaceVaults(
                     //@ts-ignore
-                    new Types.ObjectId(req.params.workspaceId)
+                    req.params.workspaceId,
+                    req.user!.userId.toString()
                 );
 
             return res.status(201).json({
@@ -60,9 +62,9 @@ class VaultController {
 
     updateVault = asyncHandler(
         async (req: Request, res: Response) => {
-            const vault =
-                await this.vaultService.updateVault(
-                    req.params.vaultId[0],
+            const vault = await this.vaultService.updateVault(
+                    req.params.vaultId as string,
+                    req.user!.userId.toString(),
                     req.body
                 );
 
@@ -77,7 +79,8 @@ class VaultController {
     deleteVault = asyncHandler(
         async (req: Request, res: Response) => {
             await this.vaultService.deleteVault(
-                req.params.vaultId[0]
+                req.params.vaultId as string,
+                req.user!.userId.toString()
             );
 
             return res.status(201).json({
@@ -89,9 +92,9 @@ class VaultController {
 
     getDefaultVault = asyncHandler(
         async (req: Request, res: Response) => {
-            const vault =
-                await this.vaultService.getDefaultVault(
-                    req.params.workspaceId[0]
+            const vault = await this.vaultService.getDefaultVault(
+                    req.params.workspaceId as string,
+                    req.user!.userId.toString()
                 );
 
             return res.status(201).json({
@@ -104,10 +107,10 @@ class VaultController {
 
     setDefaultVault = asyncHandler(
         async (req: Request, res: Response) => {
-            const vault =
-                await this.vaultService.setDefaultVault(
-                    req.params.workspaceId[0],
-                    req.params.vaultId[0]
+            const vault = await this.vaultService.setDefaultVault(
+                    req.params.workspaceId as string,
+                    req.params.vaultId as string,
+                    req.user!.userId.toString()
                 );
 
             return res.status(201).json({

@@ -47,7 +47,8 @@ class WorkspaceController {
 
         const workspace = await workspaceService.getWorkspaceById(
             //@ts-ignore
-            req.params.workspaceId
+            req.params.workspaceId,
+            req.user!.userId.toString()
         );
 
         return res.status(200).json({
@@ -65,6 +66,7 @@ class WorkspaceController {
         const workspace = await workspaceService.updateWorkspace(
             //@ts-ignore
             req.params.workspaceId,
+            req.user!.userId.toString(),
             req.body
         );
 
@@ -82,7 +84,8 @@ class WorkspaceController {
 
         await workspaceService.deleteWorkspace(
             //@ts-ignore
-            req.params.workspaceId
+            req.params.workspaceId,
+            req.user!.userId.toString()
         );
 
         return res.status(200).json({
