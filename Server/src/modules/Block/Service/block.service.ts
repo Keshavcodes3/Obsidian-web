@@ -82,10 +82,6 @@ class BlockService {
         private readonly memberRepo: typeof memberRepository,
     ) { }
 
-    // ─────────────────────────────────────────────
-    // CREATE BLOCK
-    // ─────────────────────────────────────────────
-
     createBlock = async (
         payload: CreateBlockDTO,
         userId: string
@@ -167,10 +163,7 @@ class BlockService {
         return block;
     };
 
-    // ─────────────────────────────────────────────
-    // CREATE MANY BLOCKS
-    // ──────────────────────────────────────────────
-
+ 
     createManyBlocks = async (
         payload: CreateBlockDTO[],
         userId: string
@@ -273,9 +266,6 @@ class BlockService {
         return blocks;
     };
 
-    // ─────────────────────────────────────────────
-    // GET BLOCK BY ID
-    // ─────────────────────────────────────────────
 
     getBlockById = async (
         blockId: string,
@@ -299,10 +289,6 @@ class BlockService {
         return block;
     };
 
-    // ─────────────────────────────────────────────
-    // GET NOTE BLOCKS
-    // ─────────────────────────────────────────────
-
     getNoteBlocks = async (
         noteId: string,
         userId: string
@@ -316,10 +302,6 @@ class BlockService {
             new Types.ObjectId(noteId)
         );
     };
-
-    // ─────────────────────────────────────────────
-    // GET BLOCK CHILDREN
-    // ─────────────────────────────────────────────
 
     getBlockChildren = async (
         blockId: string,
@@ -346,10 +328,7 @@ class BlockService {
         );
     };
 
-    // ─────────────────────────────────────────────
-    // UPDATE BLOCK
-    // ─────────────────────────────────────────────
-
+ 
     updateBlock = async (
         blockId: string,
         payload: UpdateBlockDTO,
@@ -445,10 +424,7 @@ class BlockService {
         return updated;
     };
 
-    // ─────────────────────────────────────────────
-    // MOVE BLOCK
-    // ─────────────────────────────────────────────
-
+ 
     moveBlock = async (
         blockId: string,
         payload: MoveBlockDTO,
@@ -543,9 +519,6 @@ class BlockService {
         return updated;
     };
 
-    // ─────────────────────────────────────────────
-    // REORDER BLOCKS
-    // ─────────────────────────────────────────────
 
     reorderBlocks = async (
         noteId: string,
@@ -614,10 +587,6 @@ class BlockService {
         return { success: true };
     };
 
-    // ─────────────────────────────────────────────
-    // DELETE BLOCK
-    // ─────────────────────────────────────────────
-
     deleteBlock = async (
         blockId: string,
         userId: string
@@ -669,11 +638,7 @@ class BlockService {
 
         return { success: true };
     };
-
-    // ─────────────────────────────────────────────
-    // RESTORE BLOCK
-    // ─────────────────────────────────────────────
-
+ 
     restoreBlock = async (
         blockId: string,
         userId: string
@@ -730,10 +695,6 @@ class BlockService {
 
         return restored;
     };
-
-    // ─────────────────────────────────────────────
-    // PRIVATE HELPERS
-    // ─────────────────────────────────────────────
 
 
 
