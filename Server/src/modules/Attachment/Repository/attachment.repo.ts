@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import AttachmentModel from "../Models/attachment.model";
 import { uploadAttachmentDTO } from "../DTO/attachment.dto";
 
-class AttachmentRepoClass {
+class AttachmentRepository {
     // CREATE
     create = async (payload: uploadAttachmentDTO) => {
         const attachment = await AttachmentModel.create(payload);
@@ -144,4 +144,4 @@ class AttachmentRepoClass {
     };
 }
 
-export default new AttachmentRepoClass();
+export default new AttachmentRepository();

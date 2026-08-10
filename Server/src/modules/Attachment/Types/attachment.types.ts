@@ -16,7 +16,7 @@ export interface IAttachment {
     originalFilename: string;
     mimeType: string;
     size: number;
-    folderId: Types.ObjectId
+    folderId: Types.ObjectId;
     uploadedBy: Types.ObjectId;
     order: number;
     isDeleted: boolean;

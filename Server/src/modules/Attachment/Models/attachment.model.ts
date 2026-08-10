@@ -1,5 +1,5 @@
 import { Document, Schema, Types, model } from "mongoose";
-import { IAttachment } from "../Types/atttachement.types";
+import { IAttachment } from "../Types/attachment.types";
 
 export interface IAttachmentI extends IAttachment, Document {
     createdAt: Date;

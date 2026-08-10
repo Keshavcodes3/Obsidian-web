@@ -1,5 +1,5 @@
 import { Router } from "express";
-import AttachmentController from "../Controllers/service.controller";
+import AttachmentController from "../Controllers/attachment.controller";
 import { upload } from "@/common/Multer/upload";
 
 const router = Router();

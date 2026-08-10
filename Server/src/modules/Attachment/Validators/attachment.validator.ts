@@ -1,6 +1,5 @@
-import { Types } from "mongoose";
-import { uploadAttachmentDTO } from "../DTO/attachment.dto";
 import { ApiError } from "@/common/utils/apiError";
+import { uploadAttachmentDTO } from "../DTO/attachment.dto";
 
 
 export const validateUpload = (payload: uploadAttachmentDTO) => {

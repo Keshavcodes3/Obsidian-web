@@ -1,13 +1,13 @@
 import { Types } from "mongoose";
 import { uploadAttachmentDTO } from "../DTO/attachment.dto";
 import { validateUpload } from "../Validators/attachment.validator";
-import attachmentRepoClass from "../Repositary/attachment.repo";
+import attachmentRepository from "../Repository/attachment.repo";
 import { ApiError } from "@/common/utils/apiError";
 import { eventBus } from "@/common/events";
 import { ATTACHMENT_EVENTS } from "../Events/attachment.event";
 
 class AttachmentService {
-    constructor(private readonly attachmentRepo: typeof attachmentRepoClass) { }
+    constructor(private readonly attachmentRepo: typeof attachmentRepository) { }
 
     uploadAttachment = async (payload: uploadAttachmentDTO) => {
         validateUpload(payload);
@@ -155,4 +155,4 @@ class AttachmentService {
     }
 }
 
-export const attachmentService = new AttachmentService(attachmentRepoClass);
+export const attachmentService = new AttachmentService(attachmentRepository);
