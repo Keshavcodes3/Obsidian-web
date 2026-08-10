@@ -124,6 +124,11 @@ type Config = {
 
     // Proxy
     readonly TRUST_PROXY: boolean;
+
+    //IMAGEKIT
+    readonly IMAGEKIT_ENDPOINT:string;
+    readonly IMAGEKIT_PUBLIC_KEY:string;
+    readonly IMAGEKIT_PRIVATE_KEY:string
 };
 
 export const envConfig: Config = {
@@ -229,4 +234,10 @@ export const envConfig: Config = {
     MAX_NOTE_REVISIONS: Number(process.env.MAX_NOTE_REVISIONS),
 
     TRUST_PROXY: process.env.TRUST_PROXY === "true",
+
+    IMAGEKIT_ENDPOINT:process.env.IMAGEKIT_ENDPOINT!,
+
+    IMAGEKIT_PRIVATE_KEY:process.env.IMAGEKIT_PRIVATE_KEY!,
+
+    IMAGEKIT_PUBLIC_KEY:process.env.IMAGEKIT_PUBLIC_KEY!
 };
