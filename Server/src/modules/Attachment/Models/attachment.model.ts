@@ -88,8 +88,8 @@ const attachmentSchema = new Schema<IAttachmentI>(
         },
         folderId: {
             type: Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
+            ref: "Folder",
+            default: null,
             index: true,
         },
         uploadedBy: {
@@ -120,23 +120,22 @@ const attachmentSchema = new Schema<IAttachmentI>(
         versionKey: false,
     }
 );
-
 attachmentSchema.index({
     blockId: 1,
     isDeleted: 1,
+    order: 1,
 });
 
 attachmentSchema.index({
     noteId: 1,
     isDeleted: 1,
+    order: 1,
 });
-
 
 attachmentSchema.index({
     workspaceId: 1,
     isDeleted: 1,
 });
-
 
 attachmentSchema.index({
     vaultId: 1,
